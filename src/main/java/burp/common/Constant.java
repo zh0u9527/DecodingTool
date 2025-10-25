@@ -12,6 +12,8 @@ public class Constant {
 
     public static final String NO_FOUND_PARAM = "未发现参数";
 
+    public static final String STACK_INFO = "堆栈异常信息";
+
     /*
     http 请求头参数值前缀
      */
