@@ -1,6 +1,7 @@
 package burp.common;
 
 import java.util.List;
+import cn.hutool.core.codec.Base64;
 
 /**
  * 综合工具集
@@ -39,6 +40,28 @@ public class CommonUtils {
             }
         }
     }
+
+
+    /**
+     * 判断字符串是否为base64编码
+     * @param str
+     * @return
+     */
+    public static boolean isBase64(String str) {
+        if (str == null || str.length() % 4 != 0) {
+            return false;
+        }
+        if (!str.matches("^[A-Za-z0-9+/]+={0,2}$")) {
+            return false;
+        }
+        try {
+            Base64.decode(str);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 
     /**
      * 处理http请求头参数问题，为了更好的获取到请求头参数值，当写的请求头没有带: 时，自动拼接。

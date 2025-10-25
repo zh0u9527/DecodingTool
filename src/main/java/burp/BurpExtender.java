@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
+import burp.common.CommonUtils;
 import burp.common.Constant;
 import burp.strategy.InitCipherStrategy;
 import cn.hutool.core.util.StrUtil;
@@ -21,9 +22,9 @@ import cn.hutool.json.JSONUtil;
  */
 public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyListener {
     
-    public String ExtensionName =  "ComprehensiveDecodingTool";
-    public String TabName =  "ComprehensiveDecodingTool";
-    public String _Header = "AES: KillerPro";
+    public String ExtensionName =  Constant.BURP_TABLE_NAME;
+    public String TabName =  Constant.BURP_TABLE_NAME;
+    public String _Header = Constant.TOOL_HEAD_PARAM;
     AES_Killer _aes_killer;
     
     public IBurpExtenderCallbacks callbacks;
@@ -72,7 +73,7 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
         
         _aes_killer = new AES_Killer(this);
         this.callbacks.addSuiteTab(this);
-        this.stdout.println("AES_Killer Installed !!!");
+        this.stdout.println(Constant.INSTALLED_MSG);
     }
 
     @Override
@@ -113,7 +114,7 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
 
         try{
             URL abc = new URL(_url);
-            return abc.getHost().toString();
+            return abc.getHost();
         }catch (Exception ex){
             print_error("get_endpoint", _url);
             return _url;
@@ -365,7 +366,6 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
                     if (!SecureUtil.md5(messageBody).equals(this.resqEncryptParamHash))
                         messageBody = this.do_encrypt(messageBody);
 
-                    messageBody = do_encrypt(messageBody);
                     byte[] updateMessage = helpers.buildHttpMessage(headers, messageBody.getBytes());
                     messageInfo.setResponse(updateMessage);
                     print_output("PPM-res", "Final Encrypted Response\n" + new String(updateMessage));
@@ -441,8 +441,12 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
                     // Complete Response Body decryption
                     String tmpreq = new String(messageInfo.getResponse());
                     String messageBody = tmpreq.substring(resInfo.getBodyOffset()).trim();
-                    this.resqEncryptParamHash = SecureUtil.md5(messageBody); // 记录原密文hash
-                    messageBody = do_decrypt(messageBody);
+
+                    if (CommonUtils.isBase64(messageBody)) {
+                        this.resqEncryptParamHash = SecureUtil.md5(messageBody); // 记录原密文hash
+                        messageBody = do_decrypt(messageBody);
+                    }
+
                     headers.add(this._Header);
                     byte[] updateMessage = helpers.buildHttpMessage(headers, messageBody.getBytes());
                     messageInfo.setResponse(updateMessage);
