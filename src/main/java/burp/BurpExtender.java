@@ -108,18 +108,7 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
         this.stderr.println(_src + " :: " + str);
     }
     
-    public String get_host(String _url){
-        if (StrUtil.isBlank(_url))
-            return "";
 
-        try{
-            URL abc = new URL(_url);
-            return abc.getHost();
-        }catch (Exception ex){
-            print_error("get_endpoint", _url);
-            return _url;
-        }
-    }
 
     public String remove_0bff(String _paramString) {
         //增强部分
@@ -312,7 +301,7 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
             IHttpRequestResponse messageInfo = message.getMessageInfo();
             IRequestInfo reqInfo = helpers.analyzeRequest(messageInfo);
             List<String> headers = reqInfo.getHeaders();
-            String whiteHost = this.get_host(reqInfo.getUrl().toString());
+            String whiteHost = CommonUtils.getHost(reqInfo.getUrl().toString());
 
             if(StrUtil.isBlank(whiteHost) || this._host.contains(whiteHost)) {
                 if (this._is_req_body) {
@@ -353,7 +342,7 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
             List<String> headers = resInfo.getHeaders();
             if(!headers.contains(this._Header)){ return; }
 
-            String whiteHost = this.get_host(reqInfo.getUrl().toString());
+            String whiteHost = CommonUtils.getHost((reqInfo.getUrl().toString()));
 
             if(StrUtil.isBlank(whiteHost) || this._host.contains(whiteHost)) {
 
@@ -391,7 +380,7 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
             IRequestInfo reqInfo = helpers.analyzeRequest(messageInfo);
             List<String> headers = reqInfo.getHeaders();
             if(!headers.contains(this._Header)){ return; }
-            String whiteHost = this.get_host(reqInfo.getUrl().toString());
+            String whiteHost = CommonUtils.getHost((reqInfo.getUrl().toString()));
 
             if(StrUtil.isBlank(whiteHost) || this._host.contains(whiteHost)) {
                 //针对整个请求体
@@ -433,7 +422,7 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
             IResponseInfo resInfo = helpers.analyzeResponse(messageInfo.getResponse());
             List<String> headers = resInfo.getHeaders();
 
-            String whiteHost = this.get_host(reqInfo.getUrl().toString());
+            String whiteHost = CommonUtils.getHost((reqInfo.getUrl().toString()));
 
             if(StrUtil.isBlank(whiteHost) || this._host.contains(whiteHost)) {
                 //响应体

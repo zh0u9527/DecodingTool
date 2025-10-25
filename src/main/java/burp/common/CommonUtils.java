@@ -1,7 +1,9 @@
 package burp.common;
 
+import java.net.URL;
 import java.util.List;
 import cn.hutool.core.codec.Base64;
+import cn.hutool.core.util.StrUtil;
 
 /**
  * 综合工具集
@@ -62,6 +64,17 @@ public class CommonUtils {
         }
     }
 
+    public static String getHost(String _url){
+        if (StrUtil.isBlank(_url))
+            return "";
+
+        try{
+            URL abc = new URL(_url);
+            return abc.getHost();
+        }catch (Exception ex){
+            return _url;
+        }
+    }
 
     /**
      * 处理http请求头参数问题，为了更好的获取到请求头参数值，当写的请求头没有带: 时，自动拼接。
