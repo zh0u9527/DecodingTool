@@ -1,5 +1,6 @@
 package burp.strategy;
 
+import burp.common.Constant;
 import burp.strategy.impl.*;
 
 import java.util.HashMap;

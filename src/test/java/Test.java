@@ -1,5 +1,4 @@
-import burp.BurpExtender;
-import burp.strategy.Constant;
+import burp.common.Constant;
 import burp.strategy.impl.AesOfbNoPaddingStrategyFactory;
 
 import javax.crypto.KeyGenerator;

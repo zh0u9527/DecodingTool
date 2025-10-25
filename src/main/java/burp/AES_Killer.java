@@ -607,7 +607,11 @@ public class AES_Killer extends javax.swing.JPanel {
     
     public Boolean validate_host(){
         String _url = this.jTextField7.getText().trim();
-        if(is_string_empty(_url)){ JOptionPane.showMessageDialog(this, "Please provide a Host URL !!!"); return false; }
+        if(is_string_empty(_url)){
+//            JOptionPane.showMessageDialog(this, "Please provide a Host URL !!!");
+//            return false;
+            return true;
+        }
         
         try{
             URL abc = new URL(_url);
@@ -621,7 +625,11 @@ public class AES_Killer extends javax.swing.JPanel {
     
     public Boolean validate_secret_key(){
         String _secret_key = this.jTextField1.getText().trim();
-        if(is_string_empty(_secret_key)){ JOptionPane.showMessageDialog(this, "Please provide a Secret Key !!!"); return false; }
+        if(is_string_empty(_secret_key)){
+//            JOptionPane.showMessageDialog(this, "Please provide a Secret Key !!!");
+//            return false;
+            return true;
+        }
         this._burpObj._secret_key = _secret_key;
         return true;
     }
@@ -633,7 +641,11 @@ public class AES_Killer extends javax.swing.JPanel {
         }
 
         String _iv_param = this.jTextField2.getText().trim();
-        if(is_string_empty(_iv_param)){ JOptionPane.showMessageDialog(this, "Please provide a IV Parameter !!!"); return false; }
+        if(is_string_empty(_iv_param)){
+//            JOptionPane.showMessageDialog(this, "Please provide a IV Parameter !!!");
+//            return false;
+            return true;
+        }
         this._burpObj._iv_param = _iv_param;
         return true;
     }

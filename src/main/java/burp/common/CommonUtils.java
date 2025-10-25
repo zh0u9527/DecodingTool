@@ -1,0 +1,53 @@
+package burp.common;
+
+import java.util.List;
+
+/**
+ * 综合工具集
+ */
+public class CommonUtils {
+    /**
+     * 从 http 请求头中获取指定参数的值
+     * @param headers
+     * @param headerName
+     * @return
+     */
+    public static String getHeaderParamValue(List<String> headers, String headerName){
+        headerName = handlerHeaderNamePrefix(headerName);
+        for (String header : headers) {
+            if (header.startsWith(headerName)) {
+                return header.substring(headerName.length());
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 从header中判断是否存在以headerName开始的请求头，如果存在，则使用新的value值进行替换
+     * @param headers
+     * @param headerName
+     * @param value
+     */
+    public static void updateHeaderParamValue(List<String> headers, String headerName, String value){
+        headerName = handlerHeaderNamePrefix(headerName);
+        for (int i = 0; i < headers.size(); i++) {
+            String header = headers.get(i);
+            if (header.startsWith(headerName)) {
+                // 替换旧的header值
+                headers.set(i, headerName + value);
+                break;
+            }
+        }
+    }
+
+    /**
+     * 处理http请求头参数问题，为了更好的获取到请求头参数值，当写的请求头没有带: 时，自动拼接。
+     * @param headerName
+     * @return
+     */
+    private static String handlerHeaderNamePrefix(String headerName){
+        if (!headerName.contains(Constant.HTTP_HEADER_PREFIX))
+            headerName = Constant.HTTP_HEADER_PREFIX + headerName;
+        return headerName;
+    }
+}

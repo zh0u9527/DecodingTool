@@ -1,4 +1,4 @@
-package burp.strategy;
+package burp.common;
 
 public class Constant {
     public static final String AES_CBC_NoPadding = "AES/CBC/NoPadding";
@@ -10,9 +10,13 @@ public class Constant {
     public static final String AES_OFB_NoPadding = "AES/OFB/NoPadding";
 
 
-    //请求头 iv ,注意格式问题。
-//    public static final String AES_IV_PARAM = "X-IV-Param: ";
-    public static final String AES_IV_PARAM = "X-IV-Param: ";
+    public static final String NO_FOUND_PARAM = "未发现参数";
+
+    /*
+    http 请求头参数值前缀
+     */
+    public static final String HTTP_HEADER_PREFIX = ": ";
+
 
 
     // AesEcbPKCS5PaddingStrategyFactory
