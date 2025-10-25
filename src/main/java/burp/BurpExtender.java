@@ -41,10 +41,6 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
     public Boolean isDebug = true;
     public Boolean isRunning = false;
     
-    public Cipher cipher;
-    public SecretKeySpec sec_key;
-    public IvParameterSpec iv_param;
-   
     public String _host;
     public String _enc_type;
     public String _secret_key;
@@ -319,7 +315,7 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
             List<String> headers = reqInfo.getHeaders();
             String whiteHost = this.get_host(reqInfo.getUrl().toString());
 
-            if(!StrUtil.isBlank(whiteHost) && this._host.contains(whiteHost)) {
+            if(StrUtil.isBlank(whiteHost) || this._host.contains(whiteHost)) {
                 if (this._is_req_body) {
                     // decrypting request body
                     String tmpreq = new String(messageInfo.getRequest());
@@ -358,7 +354,7 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
 
             String whiteHost = this.get_host(reqInfo.getUrl().toString());
 
-            if(!StrUtil.isBlank(whiteHost) && this._host.contains(whiteHost)) {
+            if(StrUtil.isBlank(whiteHost) || this._host.contains(whiteHost)) {
 
                 if (this._is_res_body) {
                     // Complete Response Body encryption
@@ -392,7 +388,7 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
             if(!headers.contains(this._Header)){ return; }
             String whiteHost = this.get_host(reqInfo.getUrl().toString());
 
-            if(!StrUtil.isBlank(whiteHost) && this._host.contains(whiteHost)) {
+            if(StrUtil.isBlank(whiteHost) || this._host.contains(whiteHost)) {
                 //针对整个请求体
                 if (this._is_req_body) {
                     String tmpreq = new String(messageInfo.getRequest());
@@ -430,7 +426,7 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
 
             String whiteHost = this.get_host(reqInfo.getUrl().toString());
 
-            if(!StrUtil.isBlank(whiteHost) && this._host.contains(whiteHost)) {
+            if(StrUtil.isBlank(whiteHost) || this._host.contains(whiteHost)) {
                 //响应体
                 if(this._is_res_body){
                     // Complete Response Body decryption
@@ -461,13 +457,4 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
         }
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }
