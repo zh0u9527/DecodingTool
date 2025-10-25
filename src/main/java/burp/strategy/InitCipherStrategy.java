@@ -38,7 +38,9 @@ public class InitCipherStrategy {
             //true表示加密，false表示解密
             return flag ? strategy.encrypt(message, key, iv, mode) : strategy.decrypt(message, key, iv, mode);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+//            throw new RuntimeException(e);
+            // 如果解密失败则返回原密文
+            return message;
         }
     }
 }

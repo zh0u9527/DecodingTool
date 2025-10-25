@@ -1,24 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package burp;
 
 import java.awt.Component;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javax.crypto.Cipher;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 
 import burp.common.Constant;
 import burp.strategy.InitCipherStrategy;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.crypto.SecureUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 
@@ -65,7 +57,10 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
     public Boolean _is_ovrr_res_body_form = false;
     public Boolean _is_ovrr_req_body_json = false;
     public Boolean _is_ovrr_res_body_json = false;
-    
+
+    public String reqEncryptParamHash;
+    public String resqEncryptParamHash;
+
     
     @Override
     public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
@@ -324,6 +319,8 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
                     String tmpreq = new String(messageInfo.getRequest());
                     String messageBody = tmpreq.substring(reqInfo.getBodyOffset()).trim();
 
+                    this.reqEncryptParamHash = SecureUtil.md5(messageBody);
+
                     String decValue = this.do_decrypt(messageBody);
                     headers.add(this._Header);
                     byte[] updateMessage = helpers.buildHttpMessage(headers, decValue.getBytes());
@@ -345,7 +342,7 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
                     return;
                 }
             }
-        } else {
+        } else { //服务器响应离开burp发送到浏览器，最后一步。
             if(this._ignore_response) { return; }
             // PPM Response
 
@@ -363,6 +360,11 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
                     // Complete Response Body encryption
                     String tmpreq = new String(messageInfo.getResponse());
                     String messageBody = tmpreq.substring(resInfo.getBodyOffset()).trim();
+
+                    // 判断是否解密成功，如果解密失败，则直接跳过；防止二次加密，即hash不相等表示解密失败，不需要再次加密
+                    if (!SecureUtil.md5(messageBody).equals(this.resqEncryptParamHash))
+                        messageBody = this.do_encrypt(messageBody);
+
                     messageBody = do_encrypt(messageBody);
                     byte[] updateMessage = helpers.buildHttpMessage(headers, messageBody.getBytes());
                     messageInfo.setResponse(updateMessage);
@@ -385,7 +387,7 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
     
     @Override
     public void processHttpMessage(int toolFlag, boolean messageIsRequest, IHttpRequestResponse messageInfo) {
-        if (messageIsRequest) { //请求
+        if (messageIsRequest) { //请求离开burp到达服务器之前对数据包进行修改
             IRequestInfo reqInfo = helpers.analyzeRequest(messageInfo);
             List<String> headers = reqInfo.getHeaders();
             if(!headers.contains(this._Header)){ return; }
@@ -396,7 +398,11 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
                 if (this._is_req_body) {
                     String tmpreq = new String(messageInfo.getRequest());
                     String messageBody = tmpreq.substring(reqInfo.getBodyOffset()).trim();
-                    messageBody = this.do_encrypt(messageBody);
+
+                    // 判断是否解密成功，如果解密失败，则直接跳过；防止二次加密，即hash不相等表示解密失败，不需要再次加密
+                    if (!SecureUtil.md5(messageBody).equals(this.reqEncryptParamHash))
+                        messageBody = this.do_encrypt(messageBody);
+
                     byte[] updateMessage = helpers.buildHttpMessage(headers, messageBody.getBytes());
                     messageInfo.setRequest(updateMessage);
                     print_output("PHTM-req", "Final Encrypted Request\n" + new String(updateMessage));
@@ -419,7 +425,7 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
             }
             
         }
-        else { //响应
+        else { //响应从服务器到达burp
             if(this._ignore_response) { return; }
             
             // PHTM Response
@@ -435,6 +441,7 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
                     // Complete Response Body decryption
                     String tmpreq = new String(messageInfo.getResponse());
                     String messageBody = tmpreq.substring(resInfo.getBodyOffset()).trim();
+                    this.resqEncryptParamHash = SecureUtil.md5(messageBody); // 记录原密文hash
                     messageBody = do_decrypt(messageBody);
                     headers.add(this._Header);
                     byte[] updateMessage = helpers.buildHttpMessage(headers, messageBody.getBytes());
