@@ -113,6 +113,9 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
     }
     
     public String get_host(String _url){
+        if (StrUtil.isBlank(_url))
+            return "";
+
         try{
             URL abc = new URL(_url);
             return abc.getHost().toString();
