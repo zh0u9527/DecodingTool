@@ -9,6 +9,8 @@ import java.util.List;
 
 import burp.common.CommonUtils;
 import burp.common.Constant;
+import burp.core.ProcessHttpMessage;
+import burp.core.ProcessProxyMessage;
 import burp.strategy.InitCipherStrategy;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
@@ -98,12 +100,12 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
         this.isRunning = false;
     }
     
-    private void print_output(String _src, String str){
+    public void print_output(String _src, String str){
         if(! isDebug){ return; }
         this.stdout.println(_src + " :: " + str);
     }
     
-    private void print_error(String _src, String str){
+    public void print_error(String _src, String str){
         if(! isDebug){ return; }
         this.stderr.println(_src + " :: " + str);
     }
@@ -299,6 +301,7 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
     public void processProxyMessage(boolean messageIsRequest, IInterceptedProxyMessage message) {
         if (messageIsRequest) {
             IHttpRequestResponse messageInfo = message.getMessageInfo();
+            ProcessProxyMessage.request(this, messageInfo);
             IRequestInfo reqInfo = helpers.analyzeRequest(messageInfo);
             List<String> headers = reqInfo.getHeaders();
             String whiteHost = CommonUtils.getHost(reqInfo.getUrl().toString());

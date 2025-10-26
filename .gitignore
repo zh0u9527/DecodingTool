@@ -3,6 +3,8 @@
 
 target/
 
+resources/
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
