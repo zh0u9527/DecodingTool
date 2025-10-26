@@ -38,7 +38,7 @@ public class Constant {
     /*
     安装插件之后打印消息。
      */
-    public static final String INSTALLED_MSG = "Welcome to the " + BURP_TABLE_NAME;
+    public static final String INSTALLED_MSG = "Welcome to use the " + BURP_TABLE_NAME;
 
 
 
