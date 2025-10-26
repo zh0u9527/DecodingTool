@@ -7,6 +7,7 @@ package burp;
 
 import burp.core.Decoder;
 import burp.strategy.InitCipherStrategy;
+import cn.hutool.core.util.StrUtil;
 
 import java.net.URL;
 import javax.swing.JOptionPane;
@@ -598,17 +599,11 @@ public class AES_Killer extends javax.swing.JPanel {
         add(jSplitPane1);
     }// </editor-fold>//GEN-END:initComponents
 
-    public Boolean is_string_empty(String _str){
-        if(_str.length() == 0 || _str.isEmpty() || _str.equals("") || _str == null){
-            return true;
-        }
-        return false;
-    }
-    
-    
+
     public Boolean validate_host(){
         String _url = this.jTextField7.getText().trim();
-        if(is_string_empty(_url)){
+
+        if(StrUtil.isBlank(_url)){
 //            JOptionPane.showMessageDialog(this, "Please provide a Host URL !!!");
 //            return false;
             return true;
@@ -626,7 +621,7 @@ public class AES_Killer extends javax.swing.JPanel {
     
     public Boolean validate_secret_key(){
         String _secret_key = this.jTextField1.getText().trim();
-        if(is_string_empty(_secret_key)){
+        if(StrUtil.isBlank(_secret_key)){
 //            JOptionPane.showMessageDialog(this, "Please provide a Secret Key !!!");
 //            return false;
             return true;
@@ -642,7 +637,7 @@ public class AES_Killer extends javax.swing.JPanel {
         }
 
         String _iv_param = this.jTextField2.getText().trim();
-        if(is_string_empty(_iv_param)){
+        if(StrUtil.isBlank(_iv_param)){
 //            JOptionPane.showMessageDialog(this, "Please provide a IV Parameter !!!");
 //            return false;
             return true;
@@ -664,7 +659,7 @@ public class AES_Killer extends javax.swing.JPanel {
     public Boolean validateReplace(){
         String replace = this.jTextField5.getText().trim();
         String with_replace = this.jTextField6.getText().trim();
-        if(!is_string_empty(with_replace) && is_string_empty(replace)){
+        if(!StrUtil.isBlank(with_replace) && StrUtil.isBlank(replace)){
             JOptionPane.showMessageDialog(this, "Please provide Obff char !!!"); 
             return false;
         }
@@ -705,7 +700,7 @@ public class AES_Killer extends javax.swing.JPanel {
             if(this.jCheckBox16.isSelected()){ this._burpObj._is_ovrr_req_body = true; this._burpObj._is_ovrr_req_body_json = true; this._burpObj._is_ovrr_req_body_form = false; }
             
             String _req_param = this.jTextField3.getText().trim();
-            if (is_string_empty(_req_param)) { JOptionPane.showMessageDialog(this, "Please provide Request Parameter !!!"); return false; }
+            if (StrUtil.isBlank(_req_param)) { JOptionPane.showMessageDialog(this, "Please provide Request Parameter !!!"); return false; }
             
             this._burpObj._req_param = _req_param.split(" ");
             if(this._burpObj._is_ovrr_req_body && this._burpObj._req_param.length > 1){ JOptionPane.showMessageDialog(this, "Request can't exceed more than once in case of override !!!"); return false;}
@@ -738,7 +733,7 @@ public class AES_Killer extends javax.swing.JPanel {
             if(this.jCheckBox17.isSelected()){ this._burpObj._is_ovrr_res_body = true; this._burpObj._is_ovrr_res_body_json = true; this._burpObj._is_ovrr_res_body_form = false; }
             
             String _res_param = this.jTextField4.getText().trim();
-            if(is_string_empty(_res_param)) { JOptionPane.showMessageDialog(this, "Please provide Respons Parameter !!!"); return false; }
+            if(StrUtil.isBlank(_res_param)) { JOptionPane.showMessageDialog(this, "Please provide Respons Parameter !!!"); return false; }
             
             this._burpObj._res_param = _res_param.split(" ");
             if(this._burpObj._is_ovrr_res_body && this._burpObj._res_param.length > 1){ JOptionPane.showMessageDialog(this, "Response can't exceed more than once in case of override !!!"); return false;}
@@ -811,7 +806,7 @@ public class AES_Killer extends javax.swing.JPanel {
     //增强加解密
     private void encryptBtnActionPerformed(String cipherText){
         //当点击加密按钮时，判断明文框内容是否为空，然后将其加密之后添加到密文框
-        if (is_string_empty(cipherText)){
+        if (StrUtil.isBlank(cipherText)){
             JOptionPane.showMessageDialog(this, "Please provide data to encrypt !!!"); return;
         }
         if(this._burpObj.isRunning){
@@ -833,7 +828,7 @@ public class AES_Killer extends javax.swing.JPanel {
     }
     private void decryptBtnActionPerformed(String plaintText){
         //当点击解密按钮时，判断密文框内容是否为空，然后将其解密之后添加到明文框
-        if (is_string_empty(plaintText)) { JOptionPane.showMessageDialog(this, "Please provide data to decrypt !!!"); return; }
+        if (StrUtil.isBlank(plaintText)) { JOptionPane.showMessageDialog(this, "Please provide data to decrypt !!!"); return; }
 
         if(this._burpObj.isRunning){
 //            this.jTextArea2.setText(this._burpObj.do_decrypt(plaintText, false));

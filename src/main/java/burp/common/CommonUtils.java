@@ -1,19 +1,11 @@
 package burp.common;
 
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.List;
 
 import burp.BurpExtender;
-import burp.IHttpRequestResponse;
-import burp.IParameter;
-import burp.IRequestInfo;
-import burp.core.Decoder;
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
 
 /**
  * 综合工具集
