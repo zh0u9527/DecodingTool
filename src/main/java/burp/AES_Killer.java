@@ -5,6 +5,7 @@
  */
 package burp;
 
+import burp.core.Decoder;
 import burp.strategy.InitCipherStrategy;
 
 import java.net.URL;
@@ -814,7 +815,7 @@ public class AES_Killer extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Please provide data to encrypt !!!"); return;
         }
         if(this._burpObj.isRunning){
-            this.jTextArea1.setText(this._burpObj.do_encrypt(cipherText, false));
+            this.jTextArea1.setText(Decoder.doEncrypt(this._burpObj, cipherText, false));
         }
         else{
             // Validate encryption / decryption input
@@ -826,7 +827,8 @@ public class AES_Killer extends javax.swing.JPanel {
 //            if(!validate_Obff()) { return; }
 //            if(!validate_url_ed()) { return; }
 
-            this.jTextArea1.setText(this._burpObj.do_encrypt(cipherText, false));
+//            this.jTextArea1.setText(this._burpObj.do_encrypt(cipherText, false));
+            this.jTextArea1.setText(Decoder.doEncrypt(this._burpObj,cipherText, false));
         }
     }
     private void decryptBtnActionPerformed(String plaintText){
@@ -834,7 +836,9 @@ public class AES_Killer extends javax.swing.JPanel {
         if (is_string_empty(plaintText)) { JOptionPane.showMessageDialog(this, "Please provide data to decrypt !!!"); return; }
 
         if(this._burpObj.isRunning){
-            this.jTextArea2.setText(this._burpObj.do_decrypt(plaintText, false));
+//            this.jTextArea2.setText(this._burpObj.do_decrypt(plaintText, false));
+            this.jTextArea2.setText(Decoder.doDecrypt(this._burpObj, plaintText, false));
+
         }
         else{
             // Validate encryption / decryption input
@@ -843,7 +847,9 @@ public class AES_Killer extends javax.swing.JPanel {
             if(!validate_iv_param()) { return; }
 
 
-            this.jTextArea2.setText(this._burpObj.do_decrypt(plaintText, false));
+//            this.jTextArea2.setText(this._burpObj.do_decrypt(plaintText, false));
+            this.jTextArea2.setText(Decoder.doDecrypt(this._burpObj, plaintText, false));
+
         }
     }
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed,encrypt btn
