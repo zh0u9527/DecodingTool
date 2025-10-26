@@ -65,10 +65,18 @@ public class Decoder {
         }
     }
 
+
     public static String doEncrypt(BurpExtender burp, String _dec_str){
         return doEncrypt(burp, _dec_str, true);
     }
 
+    /**
+     * 该函数的作用是用来插件中明文输入区域的加密
+     * @param burp
+     * @param _dec_str
+     * @param isReplace
+     * @return
+     */
     public static String doEncrypt(BurpExtender burp, String _dec_str, boolean isReplace){
         try{
             _dec_str = InitCipherStrategy.selectMode(_dec_str, burp._secret_key, burp._iv_param, burp._enc_type, true);

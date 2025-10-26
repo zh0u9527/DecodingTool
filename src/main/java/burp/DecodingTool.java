@@ -16,15 +16,15 @@ import javax.swing.JOptionPane;
  *
  * @author n00b
  */
-public class AES_Killer extends javax.swing.JPanel {
+public class DecodingTool extends javax.swing.JPanel {
 
     /**
-     * Creates new form AES_Killer
+     * Creates new form DecodingTool
      */
     
     BurpExtender _burpObj;
     
-    public AES_Killer(BurpExtender _b) {
+    public DecodingTool(BurpExtender _b) {
         this._burpObj = _b;
         initComponents();
         
@@ -123,14 +123,14 @@ public class AES_Killer extends javax.swing.JPanel {
 
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
-        jButton1.setText("Stop AES Killer");
+        jButton1.setText("Stop DecodingTool");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Start AES Killer");
+        jButton2.setText("Start DecodingTool");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -768,14 +768,14 @@ public class AES_Killer extends javax.swing.JPanel {
         // Validate Response
         if(!validate_response_params()) { return; }
         
-        // Start AES KillerPro
-        this._burpObj.start_aes_killer();
+        // Start DecodingTool
+        this._burpObj.startDecodingTool();
         
         // Change Enable / Disable Button
         this.jButton2.setEnabled(false);
         this.jButton1.setEnabled(true);
         
-        JOptionPane.showMessageDialog(this, "AES KillerPro started !!!"); 
+        JOptionPane.showMessageDialog(this, "DecodingTool started !!!");
         
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -785,12 +785,12 @@ public class AES_Killer extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        this._burpObj.stop_aes_killer();
+        this._burpObj.stopDecodingTool();
         
         this.jButton2.setEnabled(true);
         this.jButton1.setEnabled(false);
         
-        JOptionPane.showMessageDialog(this, "AES KillerPro stopped !!!");
+        JOptionPane.showMessageDialog(this, "DecodingTool stopped !!!");
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jCheckBox17ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox17ActionPerformed

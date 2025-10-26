@@ -15,7 +15,7 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
     public String ExtensionName =  Constant.BURP_TABLE_NAME;
     public String TabName =  Constant.BURP_TABLE_NAME;
     public String _Header = Constant.TOOL_HEAD_PARAM;
-    AES_Killer _aes_killer;
+    DecodingTool _decodingTool;
     
     public IBurpExtenderCallbacks callbacks;
     public IExtensionHelpers helpers;
@@ -61,7 +61,7 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
         this.stderr = new PrintWriter(callbacks.getStderr(), true);
         this.callbacks.setExtensionName(this.ExtensionName);
         
-        _aes_killer = new AES_Killer(this);
+        _decodingTool = new DecodingTool(this);
         this.callbacks.addSuiteTab(this);
         this.stdout.println(Constant.INSTALLED_MSG);
     }
@@ -73,16 +73,16 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
 
     @Override
     public Component getUiComponent() {
-        return this._aes_killer;
+        return this._decodingTool;
     }
     
-    public void start_aes_killer(){
+    public void startDecodingTool(){
         this.callbacks.registerHttpListener(this);
         this.callbacks.registerProxyListener(this);
         this.isRunning = true;
     }
     
-    public void stop_aes_killer(){
+    public void stopDecodingTool(){
         this.callbacks.removeHttpListener(this);
         this.callbacks.removeProxyListener(this);
         this.isRunning = false;
