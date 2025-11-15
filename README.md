@@ -22,9 +22,23 @@ DecodingTool最初是AESKiller的二开项目，使用该项目作为而开是�
 工具界面如下，日常在使用时，如果遇到前端加密为经典的AES加密，那么我们首先在Select Encryption下拉框选择对应的加密方式，然后填入KEY/IV（可为空），再配置Request Option和Response Option，配置好之后点击Start DecodingTool即可开始解密数据包。
 <img  alt="image" src="https://github.com/user-attachments/assets/2968e4cd-4026-4341-95f1-2af3165584e5" />
 
+目前工具支持如下加密、编码解码操作，如果你是脚本小子，不具备JS逆向和Java代码编写的基础，那么可以内置功能即可，工具后续会持续更新，预计会加入SM系列
+
+- AES/CBC/NoPadding
+- AES/CBC/PKCS5Padding
+- AES/CBC/PKCS7Padding
+- AES/ECB/NoPadding
+- AES/ECB/PKCS5Padding
+- AES/ECB/PKCS7Padding
+- AES/OFB/NoPadding
+- BASE64_DEncode
+- URL_DEncode
+
 
 
 比如发现一个网站是AES/CBC/PKCS5Padding方式进行加密，下面进行演示不同类型的加密场景。
+
+
 
 ## 2.1、整个请求体和响应体
 
@@ -40,33 +54,52 @@ burp截图如下：
 
 ![image-20251115163912706](./assets/image-20251115163912706.png)
 
+
+
 ## 2.1、请求参数
+
+请求参数支持多个，只需要将多个参数放入Specific Request Parameters输入框中，多个参数之间使用空格隔开。
+
+### 2.1.1、Content-Type为x-www-forma-urlencoded
 
 请求参数，即在http请求中只是针对其中的某个参数进行加密，如下：
 
 ![image-20251115165601971](./assets/image-20251115165601971.png)
 
-使用该工具需要具备什么样的条件基础？目前工具已经内置了AES/URL/BASE64等比较常见的数据编码：
+可以看到这里的param参数处于加密状态，解密特定参数的配置如下：
 
-- 如果你是脚本小子，不具备JS逆向和Java代码编写的基础，那么可以内置功能即可，目前工具已经内置一下功能：
-    - AES/CBC/NoPadding
-    - AES/CBC/PKCS5Padding
-    - AES/CBC/PKCS7Padding
-    - AES/ECB/NoPadding
-    - AES/ECB/PKCS5Padding
-    - AES/ECB/PKCS7Padding
-    - AES/OFB/NoPadding
-    - BASE64_DEncode
-    - URL_DEncode
-- 如果你具备JS逆向和Java代码编写基础，那么你将会最大化发挥工具的价值，工具支持自定义加解密逻辑，通过如下步骤实现自定义加解密逻辑：
-    
-    1. 在burp.strategy.impl包下面定义你自己加解密策略，同时该类需要实现burp.strategy.CipherStrategyFactory接口，然后在其对应的函数中自定义加解密逻辑即可；
-    
-    2. 在burp.common.Constant常量中定义你自己的策略常量，跟代码中已有的常量格式保存类似即可；
-    
-    3. 在burp.strategy.InitCipherStrategy类的静态代码块中放入你的加解密策略，其中静态常量Map的key为上述你自己的常量，value为你自己自定义的加解密策略；
-    
-    4. 然后重新编码打包即可。
+![image-20251115191849144](./assets/image-20251115191849144.png)
+
+burp显示如下：
+
+![image-20251115191936438](./assets/image-20251115191936438.png)
+
+### 2.1.2、Content-Type为json
+
+且请求格式为json格式时，支持多层嵌套，比如：
+
+```json
+{
+    "name": "twFGqm+zFkzsd4/yylTC/g==",
+    "password": "5zVCAs7N25TFcRI+LKTj2A==",
+    "address":
+    {
+        "tel": "1VDL5E+Ajn3CNvGMvnddKQ=="
+    }
+}
+```
+
+那么此时的参数配置为 name password address.tel
+
+![image-20251115194656537](./assets/image-20251115194656537.png)
+
+解密前：
+
+![image-20251115194742825](./assets/image-20251115194742825.png)
+
+解密后：
+
+![image-20251115194816614](./assets/image-20251115194816614.png)
 
 
 
@@ -75,3 +108,17 @@ burp截图如下：
 目前DecodingTool项目依然保留着AesKiller项目的设计理念。即通过对ProcessHttpMessage与ProcessProxyMessage方法的重写使得加密的数据从浏览器进入burp时，在burp展示为明文；从burp到服务器时，又会自动
 加密为密文，原理大致如下：
 <img  alt="image" src="https://github.com/user-attachments/assets/eb89d036-5fa3-467a-ad8c-c468957a8020" />
+
+
+
+
+
+如果你具备JS逆向和Java代码编写基础，那么你将会最大化发挥工具的价值，工具支持自定义加解密逻辑，通过如下步骤实现自定义加解密逻辑：
+
+1. 在burp.strategy.impl包下面定义你自己加解密策略，同时该类需要实现burp.strategy.CipherStrategyFactory接口，然后在其对应的函数中自定义加解密逻辑即可；
+
+2. 在burp.common.Constant常量中定义你自己的策略常量，跟代码中已有的常量格式保存类似即可；
+
+3. 在burp.strategy.InitCipherStrategy类的静态代码块中放入你的加解密策略，其中静态常量Map的key为上述你自己的常量，value为你自己自定义的加解密策略；
+
+4. 然后重新编码打包即可。
