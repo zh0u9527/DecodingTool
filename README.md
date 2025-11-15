@@ -44,7 +44,7 @@ DecodingTool最初是AESKiller的二开项目，使用该项目作为而开是�
 
 burp截图如下：
 
-![image-20251115163035075](D:\project-document\java-document\Java_burp\mavenproject1\assets\image-20251115163035075.png)
+![image-20251115163035075](./assets/image-20251115163035075.png)
 
 那么这时我们的配置如下：
 
@@ -76,7 +76,7 @@ burp显示如下：
 
 ### 2.1.2、Content-Type为json
 
-且请求格式为json格式时，支持多层嵌套，比如：
+请求格式为json格式时，支持多层嵌套，比如：
 
 ```json
 {
@@ -122,3 +122,10 @@ burp显示如下：
 3. 在burp.strategy.InitCipherStrategy类的静态代码块中放入你的加解密策略，其中静态常量Map的key为上述你自己的常量，value为你自己自定义的加解密策略；
 
 4. 然后重新编码打包即可。
+
+
+
+## 3.1、签名问题
+
+todo......
+
