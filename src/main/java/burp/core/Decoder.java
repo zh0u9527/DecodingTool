@@ -6,10 +6,12 @@ import burp.IRequestInfo;
 import burp.common.CommonUtils;
 import burp.common.Constant;
 import burp.strategy.InitCipherStrategy;
+import cn.hutool.core.net.URLDecoder;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
@@ -55,6 +57,11 @@ public class Decoder {
         try{
             if (isReplace)
                 _enc_str = remove0bff(burp, _enc_str);
+
+            // TODO 应该先判断key与iv是否为base64编码
+
+            // TODO 应该首先对其中的密文进行url解码处理
+            _enc_str = Arrays.toString(URLDecoder.decode(_enc_str.getBytes(StandardCharsets.UTF_8)));
 
             //进入加密
             _enc_str = InitCipherStrategy.selectMode(_enc_str, burp._secret_key, burp._iv_param, burp._enc_type, false);

@@ -19,6 +19,9 @@ public class InitCipherStrategy {
         strategies.put(Constant.AES_ECB_PKCS5Padding, new AesEcbOtherPaddingStrategyFactory());
         strategies.put(Constant.AES_ECB_PKCS7Padding, new AesEcbOtherPaddingStrategyFactory());
         strategies.put(Constant.AES_OFB_NoPadding, new AesOfbNoPaddingStrategyFactory());
+        strategies.put(Constant.Base64_DEncode_Strategy, new Base64DEncodeStrategyFactory());
+        strategies.put(Constant.URL_DEncode_Strategy, new URLDEncodeStrategyFactory());
+
         // 添加其他策略类的实例到 strategies
     }
 

@@ -8,6 +8,9 @@ public class Constant {
     public static final String AES_ECB_PKCS5Padding = "AES/ECB/PKCS5Padding";
     public static final String AES_ECB_PKCS7Padding = "AES/ECB/PKCS7Padding";
     public static final String AES_OFB_NoPadding = "AES/OFB/NoPadding";
+    // 编码系列
+    public static final String Base64_DEncode_Strategy = "BASE64_DEncode";
+    public static final String URL_DEncode_Strategy = "URL_DEncode";
 
 
     /*
