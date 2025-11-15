@@ -6,15 +6,20 @@ import burp.IRequestInfo;
 import burp.common.CommonUtils;
 import burp.common.Constant;
 import burp.strategy.InitCipherStrategy;
-import cn.hutool.core.net.URLDecoder;
+//import cn.hutool.core.net.URLDecoder;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 专门用于处理加解密流程问题
@@ -57,10 +62,6 @@ public class Decoder {
         try{
             if (isReplace)
                 _enc_str = remove0bff(burp, _enc_str);
-
-
-            // 应该首先对其中的密文进行url解码处理
-            _enc_str = Arrays.toString(URLDecoder.decode(_enc_str.getBytes(StandardCharsets.UTF_8)));
 
             //进入加密
             _enc_str = InitCipherStrategy.selectMode(_enc_str, burp._secret_key, burp._iv_param, burp._enc_type, false);
@@ -105,19 +106,97 @@ public class Decoder {
      * @param _do_enc
      * @return
      */
-    public static byte[] updateReqParams(BurpExtender burp, byte[] _request, List<String> headers, String[] _params, Boolean _do_enc){
+//    public static byte[] updateReqParams(BurpExtender burp, byte[] _request, List<String> headers, String[] _params, Boolean _do_enc){
+//        IRequestInfo reqInfo = burp.helpers.analyzeRequest(_request);
+//        String method = reqInfo.getMethod();
+//        List<IParameter> allParams = reqInfo.getParameters();
+//
+//        // 不再构造 message，只补 header
+//        if (!headers.contains(burp._Header)) {
+//            headers.add(burp._Header);
+//        }
+//
+//        IRequestInfo newInfo = burp.helpers.analyzeRequest(_request);
+//        byte[] body = Arrays.copyOfRange(_request, newInfo.getBodyOffset(), _request.length);
+//        _request = burp.helpers.buildHttpMessage(headers, body);
+//
+//        for (String paramName : _params) {
+//            IParameter targetParam = burp.helpers.getRequestParameter(_request, paramName);
+//            if (targetParam == null || targetParam.getName().isEmpty()) {
+//                continue;
+//            }
+//
+//            // 针对Content-Type: application/x-www-form-urlencoded的请求在加密前应该对请求参数值进行URL解码，在返回密文前应该对得到的密文进行URL编码
+//            String newValue = null;
+//            try {
+//                newValue = _do_enc ? Decoder.doEncrypt(burp, URLDecoder.decode(targetParam.getValue().trim(), StandardCharsets.UTF_8.name())) :
+//                        URLEncoder.encode(Decoder.doDecrypt(burp,targetParam.getValue().trim()), StandardCharsets.UTF_8.name());
+//            } catch (UnsupportedEncodingException e) {
+//                CommonUtils.printErr(burp,"updateReqParams()", e.getMessage());
+//                throw new RuntimeException(e);
+//            }
+//
+//            // 特殊处理请求体覆盖模式
+//            if (burp._is_ovrr_req_body || burp._is_ovrr_res_body) {
+//                if (!headers.contains(burp._Header)) {
+//                    headers.add(burp._Header);
+//                }
+//                return burp.helpers.buildHttpMessage(headers, newValue.getBytes());
+//            }
+//
+//            IParameter newParam = null;
+//            boolean updated = false;
+//
+//            if ("POST".equalsIgnoreCase(method)) {
+//                if (targetParam.getType() == IParameter.PARAM_BODY) {
+//                    newParam = burp.helpers.buildParameter(paramName, newValue, IParameter.PARAM_BODY);
+//                    updated = true;
+//                } else {
+//                    for (IParameter param : allParams) {
+//                        if (param.getType() == IParameter.PARAM_BODY && param.getName().equals(paramName)) {
+//                            _request = burp.helpers.removeParameter(_request, param);
+//                            newParam = burp.helpers.buildParameter(paramName, newValue, IParameter.PARAM_BODY);
+//                            updated = true;
+//                            break;
+//                        }
+//                    }
+//                    if (!updated && targetParam.getType() == IParameter.PARAM_URL) {
+//                        newParam = burp.helpers.buildParameter(paramName, newValue, IParameter.PARAM_URL);
+//                        updated = true;
+//                    }
+//                }
+//            } else if ("GET".equalsIgnoreCase(method)) {
+//                if (targetParam.getType() == IParameter.PARAM_URL) {
+//                    newParam = burp.helpers.buildParameter(paramName, newValue, IParameter.PARAM_URL);
+//                    updated = true;
+//                }
+//            }
+//
+//            if (updated && newParam != null) {
+//                _request = burp.helpers.removeParameter(_request, targetParam);
+//                _request = burp.helpers.addParameter(_request, newParam);
+//            }
+//
+//        }
+//
+//        return _request;
+//    }
+
+    public static byte[] updateReqParams(BurpExtender burp, byte[] _request, List<String> headers, String[] _params, Boolean _do_enc) {
         IRequestInfo reqInfo = burp.helpers.analyzeRequest(_request);
         String method = reqInfo.getMethod();
         List<IParameter> allParams = reqInfo.getParameters();
 
-        // 不再构造 message，只补 header
+        // 确保 header 只加一次
         if (!headers.contains(burp._Header)) {
             headers.add(burp._Header);
         }
 
-        IRequestInfo newInfo = burp.helpers.analyzeRequest(_request);
-        byte[] body = Arrays.copyOfRange(_request, newInfo.getBodyOffset(), _request.length);
+        // POST body
+        byte[] body = Arrays.copyOfRange(_request, reqInfo.getBodyOffset(), _request.length);
         _request = burp.helpers.buildHttpMessage(headers, body);
+
+        Map<String, String> updatedParams = new HashMap<>();
 
         for (String paramName : _params) {
             IParameter targetParam = burp.helpers.getRequestParameter(_request, paramName);
@@ -125,53 +204,47 @@ public class Decoder {
                 continue;
             }
 
-            String newValue = _do_enc ? Decoder.doEncrypt(burp,targetParam.getValue().trim()) : Decoder.doDecrypt(burp,targetParam.getValue().trim());
+            String value = targetParam.getValue().trim();
+            String newValue;
 
-            // 特殊处理请求体覆盖模式
-            if (burp._is_ovrr_req_body || burp._is_ovrr_res_body) {
-                if (!headers.contains(burp._Header)) {
-                    headers.add(burp._Header);
-                }
-                return burp.helpers.buildHttpMessage(headers, newValue.getBytes());
-            }
-
-            IParameter newParam = null;
-            boolean updated = false;
-
-            if ("POST".equalsIgnoreCase(method)) {
-                if (targetParam.getType() == IParameter.PARAM_BODY) {
-                    newParam = burp.helpers.buildParameter(paramName, newValue, IParameter.PARAM_BODY);
-                    updated = true;
+            try {
+                if (_do_enc) { // true表示加密，false表示解密
+                    // 解密前先 URLDecode
+                    value = Decoder.doEncrypt(burp, value);
+                    newValue = URLEncoder.encode(value, StandardCharsets.UTF_8.name());
                 } else {
-                    for (IParameter param : allParams) {
-                        if (param.getType() == IParameter.PARAM_BODY && param.getName().equals(paramName)) {
-                            _request = burp.helpers.removeParameter(_request, param);
-                            newParam = burp.helpers.buildParameter(paramName, newValue, IParameter.PARAM_BODY);
-                            updated = true;
-                            break;
-                        }
-                    }
-                    if (!updated && targetParam.getType() == IParameter.PARAM_URL) {
-                        newParam = burp.helpers.buildParameter(paramName, newValue, IParameter.PARAM_URL);
-                        updated = true;
-                    }
+                    // 加密后再 URLEncode
+                    value = URLDecoder.decode(value, StandardCharsets.UTF_8.name());
+                    newValue = Decoder.doDecrypt(burp, value);
                 }
-            } else if ("GET".equalsIgnoreCase(method)) {
-                if (targetParam.getType() == IParameter.PARAM_URL) {
-                    newParam = burp.helpers.buildParameter(paramName, newValue, IParameter.PARAM_URL);
-                    updated = true;
-                }
+            } catch (UnsupportedEncodingException e) {
+                CommonUtils.printErr(burp,"updateReqParams", e.getMessage());
+                throw  new RuntimeException(e);
             }
 
-            if (updated && newParam != null) {
-                _request = burp.helpers.removeParameter(_request, targetParam);
+            updatedParams.put(paramName, newValue);
+        }
+
+        // 更新请求参数
+        for (Map.Entry<String, String> entry : updatedParams.entrySet()) {
+            String paramName = entry.getKey();
+            String newValue = entry.getValue();
+            IParameter oldParam = burp.helpers.getRequestParameter(_request, paramName);
+            if (oldParam != null) {
+                IParameter newParam = burp.helpers.buildParameter(paramName, newValue, oldParam.getType());
+                _request = burp.helpers.removeParameter(_request, oldParam);
                 _request = burp.helpers.addParameter(_request, newParam);
             }
+        }
 
+        // 覆盖模式特殊处理
+        if (burp._is_ovrr_req_body || burp._is_ovrr_res_body) {
+            return burp.helpers.buildHttpMessage(headers, Arrays.toString(_request).getBytes(StandardCharsets.UTF_8));
         }
 
         return _request;
     }
+
 
     /**
      * 加解密json格式的参数
