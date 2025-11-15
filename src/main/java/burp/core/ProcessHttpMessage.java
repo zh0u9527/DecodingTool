@@ -18,9 +18,9 @@ public class ProcessHttpMessage {
         IRequestInfo reqInfo = burp.helpers.analyzeRequest(messageInfo);
         List<String> headers = reqInfo.getHeaders();
         if(!headers.contains(burp._Header)){ return; }
-        String whiteHost = CommonUtils.getHost((reqInfo.getUrl().toString()));
+        String reqUrl = CommonUtils.getHost(reqInfo.getUrl().toString());
 
-        if(StrUtil.isBlank(whiteHost) || burp._host.contains(whiteHost)) {
+        if(StrUtil.isBlank(burp._host) || burp._host.contains(reqUrl)) {
             //针对整个请求体
             if (burp._is_req_body) {
                 String tmpreq = new String(messageInfo.getRequest());
@@ -57,9 +57,9 @@ public class ProcessHttpMessage {
         IResponseInfo resInfo = burp.helpers.analyzeResponse(messageInfo.getResponse());
         List<String> headers = resInfo.getHeaders();
 
-        String whiteHost = CommonUtils.getHost((reqInfo.getUrl().toString()));
+        String reqUrl = CommonUtils.getHost(reqInfo.getUrl().toString());
 
-        if(StrUtil.isBlank(whiteHost) || burp._host.contains(whiteHost)) {
+        if(StrUtil.isBlank(burp._host) || burp._host.contains(reqUrl)) {
             //响应体
             if(burp._is_res_body){
                 // Complete Response Body decryption

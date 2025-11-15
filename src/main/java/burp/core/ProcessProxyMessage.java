@@ -19,9 +19,10 @@ public class ProcessProxyMessage {
 
         IRequestInfo reqInfo = burp.helpers.analyzeRequest(messageInfo);
         List<String> headers = reqInfo.getHeaders();
-        String whiteHost = CommonUtils.getHost(reqInfo.getUrl().toString());
+        // 这里获取的是请求的URL，而不是插件的白名单
+        String reqUrl = CommonUtils.getHost(reqInfo.getUrl().toString());
 
-        if(StrUtil.isBlank(whiteHost) || burp._host.contains(whiteHost)) {
+        if(StrUtil.isBlank(burp._host) || burp._host.contains(reqUrl)) {
             if (burp._is_req_body) {
                 // decrypting request body
                 String tmpreq = new String(messageInfo.getRequest());
@@ -59,9 +60,9 @@ public class ProcessProxyMessage {
         List<String> headers = resInfo.getHeaders();
         if(!headers.contains(burp._Header)){ return; }
 
-        String whiteHost = CommonUtils.getHost((reqInfo.getUrl().toString()));
+        String reqUrl = CommonUtils.getHost(reqInfo.getUrl().toString());
 
-        if(StrUtil.isBlank(whiteHost) || burp._host.contains(whiteHost)) {
+        if(StrUtil.isBlank(burp._host) || burp._host.contains(reqUrl)) {
             if (burp._is_res_body) {
                 // Complete Response Body encryption
                 String tmpreq = new String(messageInfo.getResponse());

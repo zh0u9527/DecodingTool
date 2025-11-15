@@ -58,9 +58,8 @@ public class Decoder {
             if (isReplace)
                 _enc_str = remove0bff(burp, _enc_str);
 
-            // TODO 应该先判断key与iv是否为base64编码
 
-            // TODO 应该首先对其中的密文进行url解码处理
+            // 应该首先对其中的密文进行url解码处理
             _enc_str = Arrays.toString(URLDecoder.decode(_enc_str.getBytes(StandardCharsets.UTF_8)));
 
             //进入加密
