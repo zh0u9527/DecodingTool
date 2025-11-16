@@ -6,13 +6,11 @@ import burp.IRequestInfo;
 import burp.common.CommonUtils;
 import burp.common.Constant;
 import burp.strategy.InitCipherStrategy;
-//import cn.hutool.core.net.URLDecoder;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -106,82 +104,6 @@ public class Decoder {
      * @param _do_enc
      * @return
      */
-//    public static byte[] updateReqParams(BurpExtender burp, byte[] _request, List<String> headers, String[] _params, Boolean _do_enc){
-//        IRequestInfo reqInfo = burp.helpers.analyzeRequest(_request);
-//        String method = reqInfo.getMethod();
-//        List<IParameter> allParams = reqInfo.getParameters();
-//
-//        // 不再构造 message，只补 header
-//        if (!headers.contains(burp._Header)) {
-//            headers.add(burp._Header);
-//        }
-//
-//        IRequestInfo newInfo = burp.helpers.analyzeRequest(_request);
-//        byte[] body = Arrays.copyOfRange(_request, newInfo.getBodyOffset(), _request.length);
-//        _request = burp.helpers.buildHttpMessage(headers, body);
-//
-//        for (String paramName : _params) {
-//            IParameter targetParam = burp.helpers.getRequestParameter(_request, paramName);
-//            if (targetParam == null || targetParam.getName().isEmpty()) {
-//                continue;
-//            }
-//
-//            // 针对Content-Type: application/x-www-form-urlencoded的请求在加密前应该对请求参数值进行URL解码，在返回密文前应该对得到的密文进行URL编码
-//            String newValue = null;
-//            try {
-//                newValue = _do_enc ? Decoder.doEncrypt(burp, URLDecoder.decode(targetParam.getValue().trim(), StandardCharsets.UTF_8.name())) :
-//                        URLEncoder.encode(Decoder.doDecrypt(burp,targetParam.getValue().trim()), StandardCharsets.UTF_8.name());
-//            } catch (UnsupportedEncodingException e) {
-//                CommonUtils.printErr(burp,"updateReqParams()", e.getMessage());
-//                throw new RuntimeException(e);
-//            }
-//
-//            // 特殊处理请求体覆盖模式
-//            if (burp._is_ovrr_req_body || burp._is_ovrr_res_body) {
-//                if (!headers.contains(burp._Header)) {
-//                    headers.add(burp._Header);
-//                }
-//                return burp.helpers.buildHttpMessage(headers, newValue.getBytes());
-//            }
-//
-//            IParameter newParam = null;
-//            boolean updated = false;
-//
-//            if ("POST".equalsIgnoreCase(method)) {
-//                if (targetParam.getType() == IParameter.PARAM_BODY) {
-//                    newParam = burp.helpers.buildParameter(paramName, newValue, IParameter.PARAM_BODY);
-//                    updated = true;
-//                } else {
-//                    for (IParameter param : allParams) {
-//                        if (param.getType() == IParameter.PARAM_BODY && param.getName().equals(paramName)) {
-//                            _request = burp.helpers.removeParameter(_request, param);
-//                            newParam = burp.helpers.buildParameter(paramName, newValue, IParameter.PARAM_BODY);
-//                            updated = true;
-//                            break;
-//                        }
-//                    }
-//                    if (!updated && targetParam.getType() == IParameter.PARAM_URL) {
-//                        newParam = burp.helpers.buildParameter(paramName, newValue, IParameter.PARAM_URL);
-//                        updated = true;
-//                    }
-//                }
-//            } else if ("GET".equalsIgnoreCase(method)) {
-//                if (targetParam.getType() == IParameter.PARAM_URL) {
-//                    newParam = burp.helpers.buildParameter(paramName, newValue, IParameter.PARAM_URL);
-//                    updated = true;
-//                }
-//            }
-//
-//            if (updated && newParam != null) {
-//                _request = burp.helpers.removeParameter(_request, targetParam);
-//                _request = burp.helpers.addParameter(_request, newParam);
-//            }
-//
-//        }
-//
-//        return _request;
-//    }
-
     public static byte[] updateReqParams(BurpExtender burp, byte[] _request, List<String> headers, String[] _params, Boolean _do_enc) {
         IRequestInfo reqInfo = burp.helpers.analyzeRequest(_request);
         String method = reqInfo.getMethod();

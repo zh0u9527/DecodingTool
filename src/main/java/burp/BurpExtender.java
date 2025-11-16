@@ -26,15 +26,15 @@ public class BurpExtender implements IBurpExtender, ITab, IHttpListener, IProxyL
     
     public String _host = "";
     public String _enc_type = "";
-    public String _secret_key = "1234567887654321";
-    public String _iv_param = "1234567887654321";
+    public String _secret_key = "";
+    public String _iv_param = "";
+    public String _signature = "";
     public String[] _req_param = new String[]{};
     public String[] _res_param = new String[]{};
     
     public String[] _obffusicatedChar = new String[]{};
     public String[] _replaceWithChar = new String[]{};
     
-    public Boolean _exclude_iv = false;
     public Boolean _ignore_response = false;
     public Boolean _do_off = false;
     public Boolean _url_enc_dec = false;

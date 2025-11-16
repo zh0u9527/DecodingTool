@@ -90,6 +90,16 @@ public class CommonUtils {
         burp.stdout.println(prefix + " :: " + msg);
     }
 
+    public static void printOut(BurpExtender burp, String msg){
+        printOut(burp, "", msg);
+    }
+
+
+    public static void printErr(BurpExtender burp, String errMsg){
+        printErr(burp, "", errMsg);
+    }
+
+
     public static void printErr(BurpExtender burp, String prefix, String errMsg){
         if(! burp.isDebug){ return; }
         burp.stderr.println(prefix + " :: " + errMsg);

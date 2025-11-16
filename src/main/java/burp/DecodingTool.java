@@ -6,7 +6,6 @@
 package burp;
 
 import burp.core.Decoder;
-import burp.strategy.InitCipherStrategy;
 import cn.hutool.core.util.StrUtil;
 
 import java.net.URL;
@@ -81,8 +80,9 @@ public class DecodingTool extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
-        jCheckBox1 = new javax.swing.JCheckBox();
+        jTextField_Sign = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        jTextField8 = new javax.swing.JTextField();
         jPanel9 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jTextField5 = new javax.swing.JTextField();
@@ -308,8 +308,7 @@ public class DecodingTool extends javax.swing.JPanel {
 
         jLabel1.setText("Select Encryption");
 
-        //增强部分
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(InitCipherStrategy.getSelectMode()));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AES/CBC/NoPadding", "AES/CBC/PKCS5Padding", "AES/CBC/PKCS7Padding", "AES/ECB/NoPadding", "AES/ECB/PKCS5Padding", "AES/ECB/PKCS7Padding", " " }));
         jComboBox1.setName("encryption_type"); // NOI18N
 
         jLabel2.setText("Secret Key ");
@@ -318,11 +317,11 @@ public class DecodingTool extends javax.swing.JPanel {
 
         jLabel3.setText("IV ");
 
-        jTextField2.setName("iv"); // NOI18N
+        jTextField_Sign.setName("sign"); // NOI18N
 
-        jCheckBox1.setText("Exclude / Ignore IV");
-        jCheckBox1.setEnabled(false);
-        jCheckBox1.setName("excludeIV"); // NOI18N
+        jLabel9.setText("Sign Parameter");
+
+        jTextField8.setName("iv"); // NOI18N
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -331,17 +330,22 @@ public class DecodingTool extends javax.swing.JPanel {
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jComboBox1, 0, 378, Short.MAX_VALUE)
                     .addComponent(jTextField1)
-                    .addComponent(jTextField2)
+                    .addComponent(jTextField_Sign)
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
                             .addComponent(jLabel2)
                             .addComponent(jLabel3)
-                            .addComponent(jCheckBox1))
-                        .addGap(0, 243, Short.MAX_VALUE)))
+                            .addComponent(jLabel9))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel5Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jTextField8)
+                    .addContainerGap()))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -356,11 +360,16 @@ public class DecodingTool extends javax.swing.JPanel {
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
-                .addComponent(jCheckBox1)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
+                .addComponent(jLabel9)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jTextField_Sign, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10))
+            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                    .addContainerGap(167, Short.MAX_VALUE)
+                    .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(78, 78, 78)))
         );
 
         jPanel4.add(jPanel5);
@@ -423,10 +432,12 @@ public class DecodingTool extends javax.swing.JPanel {
 
         buttonGroup3.add(jCheckBox6);
         jCheckBox6.setText("Override Complete request body (After decrypting - Form)");
+        jCheckBox6.setEnabled(false);
         jCheckBox6.setName("override_req"); // NOI18N
 
         buttonGroup3.add(jCheckBox16);
         jCheckBox16.setText("Override Complete request body (After decrypting - JSON)");
+        jCheckBox16.setEnabled(false);
         jCheckBox16.setName("override_req"); // NOI18N
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
@@ -481,6 +492,7 @@ public class DecodingTool extends javax.swing.JPanel {
 
         buttonGroup4.add(jCheckBox7);
         jCheckBox7.setText("Override Complete response body (After decrypting - Form)");
+        jCheckBox7.setEnabled(false);
         jCheckBox7.setName("override_res"); // NOI18N
         jCheckBox7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -493,6 +505,7 @@ public class DecodingTool extends javax.swing.JPanel {
 
         buttonGroup4.add(jCheckBox17);
         jCheckBox17.setText("Override Complete response body (After decrypting - JSON)");
+        jCheckBox17.setEnabled(false);
         jCheckBox17.setName("override_res"); // NOI18N
         jCheckBox17.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -622,24 +635,23 @@ public class DecodingTool extends javax.swing.JPanel {
     public Boolean validate_secret_key(){
         String _secret_key = this.jTextField1.getText().trim();
         if(StrUtil.isBlank(_secret_key)){
-//            JOptionPane.showMessageDialog(this, "Please provide a Secret Key !!!");
-//            return false;
             return true;
         }
         this._burpObj._secret_key = _secret_key;
         return true;
     }
+
+    // 处理签名
+    public void initSign(){
+        String signature = this.jTextField_Sign.getText().trim();
+        if (!StrUtil.isEmpty(signature)) {
+            this._burpObj._signature = signature;
+        }
+    }
     
     public Boolean validate_iv_param(){
-        if(this.jCheckBox1.isSelected()){
-            this._burpObj._exclude_iv = true;
-            return true;
-        }
-
-        String _iv_param = this.jTextField2.getText().trim();
+        String _iv_param = this.jTextField8.getText().trim();
         if(StrUtil.isBlank(_iv_param)){
-//            JOptionPane.showMessageDialog(this, "Please provide a IV Parameter !!!");
-//            return false;
             return true;
         }
         this._burpObj._iv_param = _iv_param;
@@ -758,6 +770,9 @@ public class DecodingTool extends javax.swing.JPanel {
         // Validate Obff + URL
         if(!validate_Obff()) { return; }
         if(!validate_url_ed()) { return; }
+
+        // 校验签名
+        initSign();
         
         // Validate Debug Mode
         validate_debug_mode();
@@ -774,8 +789,9 @@ public class DecodingTool extends javax.swing.JPanel {
         // Change Enable / Disable Button
         this.jButton2.setEnabled(false);
         this.jButton1.setEnabled(true);
-        
-        JOptionPane.showMessageDialog(this, "DecodingTool started !!!");
+
+        // 关闭弹窗
+//        JOptionPane.showMessageDialog(this, "DecodingTool started !!!");
         
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -789,8 +805,9 @@ public class DecodingTool extends javax.swing.JPanel {
         
         this.jButton2.setEnabled(true);
         this.jButton1.setEnabled(false);
-        
-        JOptionPane.showMessageDialog(this, "DecodingTool stopped !!!");
+
+        // 关闭弹窗
+//        JOptionPane.showMessageDialog(this, "DecodingTool stopped !!!");
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jCheckBox17ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox17ActionPerformed
@@ -847,21 +864,21 @@ public class DecodingTool extends javax.swing.JPanel {
 
         }
     }
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed,encrypt btn
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {                                                     
         // TODO add your handling code here:
         String _txt = this.jTextArea2.getText().trim();
 
         //增强逻辑
         encryptBtnActionPerformed(_txt);
         
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }                                        
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed,decrypt btn
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {                                                     
         // TODO add your handling code here:
         String _txt = this.jTextArea1.getText().trim();
         //增强逻辑
         decryptBtnActionPerformed(_txt);
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }                                        
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -875,7 +892,6 @@ public class DecodingTool extends javax.swing.JPanel {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
-    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox10;
     private javax.swing.JCheckBox jCheckBox11;
     private javax.swing.JCheckBox jCheckBox12;
@@ -901,6 +917,7 @@ public class DecodingTool extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
@@ -921,11 +938,12 @@ public class DecodingTool extends javax.swing.JPanel {
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextArea jTextArea2;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
     private javax.swing.JTextField jTextField7;
+    private javax.swing.JTextField jTextField8; // iv
+    private javax.swing.JTextField jTextField_Sign; // signature
     // End of variables declaration//GEN-END:variables
 }

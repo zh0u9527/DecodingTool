@@ -22,6 +22,11 @@ public class ProcessProxyMessage {
         // 这里获取的是请求的URL，而不是插件的白名单
         String reqUrl = CommonUtils.getHost(reqInfo.getUrl().toString());
 
+        // 处理签名问题，如果不需要修改参与签名计算的参数，这里可以忽略
+        if (!StrUtil.isBlank(burp._signature) && !StrUtil.isBlank(CommonUtils.getHeaderParamValue(headers, burp._signature))) {
+
+        }
+
         if(StrUtil.isBlank(burp._host) || burp._host.contains(reqUrl)) {
             if (burp._is_req_body) {
                 // decrypting request body
